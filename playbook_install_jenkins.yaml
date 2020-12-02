@@ -1,0 +1,7 @@
+- name: Configure Jenkins
+  hosts: vm1
+  become: yes
+  roles:
+    - adrianjuhl.git
+    - abessifi.java
+    - geerlingguy.jenkins

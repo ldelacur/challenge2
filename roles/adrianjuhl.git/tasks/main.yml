@@ -1,0 +1,8 @@
+---
+# tasks file for ansible-role-git
+- name: install git
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - git

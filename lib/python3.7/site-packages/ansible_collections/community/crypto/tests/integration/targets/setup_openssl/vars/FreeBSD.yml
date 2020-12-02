@@ -1,0 +1,4 @@
+---
+openssl_package_name: openssl
+cryptography_package_name: py27-cryptography
+cryptography_package_name_python3: py36-cryptography
