@@ -1,0 +1,22 @@
+- name: Delete instance(s)
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    service_account_email: SA_ACCOUNT_MAIL
+    credentials_file: SA_ACCOUNT_FILE
+    project_id: SA_ACCOUNT_PROJECT
+    zone: us-central1-a
+
+  tasks:
+
+    - name: Destroy instances
+
+      gce:
+        instance_names: "{{ instances }}"
+        zone: "{{ zone }}"
+        project_id: "{{ project_id }}"
+        credentials_file: "{{ credentials_file }}"
+        service_account_email: "{{ service_account_email }}"
+        state: absent

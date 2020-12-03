@@ -1,5 +1,8 @@
 #!/usr/bin/sh
 
+#
+export ANSIBLE_HOST_KEY_CHECKING=False
+
 # env
 GOOGLE_APPLICATION_CREDENTIALS="/tmp/sa1-294.json" #!!!!!!!!!!! MANDATORY
 
@@ -11,7 +14,7 @@ PYTHON3_BIN=$(which python3)
 PIP_BIN=$(which pip)
 
 # necessary
-GCLOUD_ZONE="us-east1-b"
+GCLOUD_ZONE="us-central1-a"
 
 # output
 output() {
@@ -42,13 +45,26 @@ create_instance_gcloud() {
 
   cd $CHALLENGE2_WORKDIR
   
-  #python3 env
-  $PYTHON3_BIN -m venv .
-  source bin/activate
-  pip install apache-libcloud pycrypto ansible
- 
   #roles
-  ansible-galaxy role install -r requirements. yml 
+  ansible-galaxy role install -r requirements.yml -p role
+
+  #vm
+  SA_ACCOUNT_MAIL=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep client_email | cut -d\" -f 4)
+  SA_ACCOUNT_PROJECT=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep project | cut -d\" -f 4)
+  SA_ACCOUNT_FILE=$GOOGLE_APPLICATION_CREDENTIALS
+  sed -e "s;SA_ACCOUNT_MAIL;$SA_ACCOUNT_MAIL;g" -e "s;SA_ACCOUNT_PROJECT;$SA_ACCOUNT_PROJECT;g" -e "s;SA_ACCOUNT_FILE;$SA_ACCOUNT_FILE;g" gce-instances-create.yaml.template > gce-instances-create.yaml
+  ansible-playbook -e instances="vm1" -vv gce-instances-create.yaml
+
+}
+
+ansible_apply_jenkins() {
+  echo "ansible apply jenkins app ..."
+
+  IP=$(gcloud compute instances describe vm1 --zone $GCLOUD_ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+  echo $IP
+  sed -e "s;IP;$IP;g" hosts.template > hosts
+  ansible-playbook -i hosts -v playbook_install_jenkins.yaml
+  gcloud compute --project=$GCLOUD_PROJECT_NAME firewall-rules create custom-allow-jenkins --description="Jenkins TCP 8080" --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:8080 --source-ranges=0.0.0.0/0 --target-tags=ansible
 }
 
 # check 
@@ -69,7 +85,7 @@ init() {
     help
     exit 0;
   }
-  [ $($PIP_BIN --version | grep "python 3.*" | wc -l) -eq "1" ] || { echo pip is not installed;
+  [ $($PIP_BIN --version | grep "python" | wc -l) -eq "1" ] || { echo pip is not installed;
     help
     exit 0;
   }
@@ -88,15 +104,20 @@ init() {
 destroy() {
   init
   
-  #echo Y | $KUBECTL_BIN delete -f $CHALLENGE1_WORKDIR/api/deployment.yaml # deployment 
-  #echo Y | $GCLOUD_BIN container clusters delete $GCLOUD_CLUSTER_NAME --zone $GCLOUD_ZONE # cluster
-  #echo Y | $GCLOUD_BIN container images delete $GCLOUD_IMAGE_NAME:$GCLOUD_IMAGE_TAG # gcloud image
+  #vm
+  SA_ACCOUNT_MAIL=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep client_email | cut -d\" -f 4)
+  SA_ACCOUNT_PROJECT=$(cat $GOOGLE_APPLICATION_CREDENTIALS | grep project | cut -d\" -f 4)
+  SA_ACCOUNT_FILE=$GOOGLE_APPLICATION_CREDENTIALS
+  sed -e "s;SA_ACCOUNT_MAIL;$SA_ACCOUNT_MAIL;g" -e "s;SA_ACCOUNT_PROJECT;$SA_ACCOUNT_PROJECT;g" -e "s;SA_ACCOUNT_FILE;$SA_ACCOUNT_FILE;g" gce-instances-delete.yaml.template > gce-instances-delete.yaml
+  ansible-playbook -e instances="vm1" -vv gce-instances-delete.yaml
+  echo Y | gcloud compute --project=$GCLOUD_PROJECT_NAME firewall-rules delete custom-allow-jenkins
 }
 
 # create
 create() {
   init
   create_instance_gcloud # with gcloud
+  ansible_apply_jenkins 
 }
 
 case "$1" in

@@ -1,4 +1,4 @@
-#!/home/vagrant/challenge2/bin/python3
+#!/home/vagrant/challenge3/bin/python
 # PYTHON_ARGCOMPLETE_OK
 """Command line entry point for ansible-test."""
 

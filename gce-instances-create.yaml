@@ -3,7 +3,7 @@
   connection: local
   gather_facts: no
   vars:
-    service_account_email: sa1-294@iconic-monitor-297012.iam.gserviceaccount.com
+    service_account_email: sa1-294@iconic-monitor-297012.iam.gserviceaccount.com 
     credentials_file: /tmp/sa1-294.json
     project_id: iconic-monitor-297012
     machine_type: n1-standard-1
