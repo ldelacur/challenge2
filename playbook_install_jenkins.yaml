@@ -1,7 +1,14 @@
 - name: Configure Jenkins
   hosts: vm1
   become: yes
+  vars:
+    - jenkins_http_port: 8080
+      jenkins_admin_username: admin
+      jenkins_admin_password: del1alocho
+      jenkins_plugins:
+        - matrix-auth
+        - pipeline
   roles:
     - adrianjuhl.git
-    - abessifi.java
-    - geerlingguy.jenkins
+    - codeyourinfra.oracle_java8
+    - codeyourinfra.jenkins

@@ -1,0 +1,12 @@
+---
+- hosts: containers
+  roles:
+    - jenkins
+  tasks:
+    - name: Get Jenkins version
+      shell: java -jar /usr/share/jenkins/jenkins.war --version
+      register: jenkins_version_result
+    - name: Assert Jenkins version
+      assert:
+        that: jenkins_version_result.stdout_lines[0] | regex_search('^[\d.]+$') != ''
+        msg: "Failure on Jenkins installation"

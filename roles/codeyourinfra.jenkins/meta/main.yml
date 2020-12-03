@@ -1,0 +1,23 @@
+galaxy_info:
+  author: Gustavo Muniz do Carmo
+  description: Role to install Jenkins
+  company: codeyourinfra.today
+  license: MIT
+
+  min_ansible_version: 1.6
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - xenial
+    - name: CentOS
+      versions:
+        - 7
+        - 8
+
+  galaxy_tags:
+    - jenkins
+
+dependencies:
+  - role: codeyourinfra.java8

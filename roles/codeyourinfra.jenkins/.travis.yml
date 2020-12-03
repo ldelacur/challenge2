@@ -1,0 +1,24 @@
+---
+language: python
+python: "3.6"
+
+sudo: required
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+    - python-pip
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - molecule test
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  slack:
+    secure: bkLXIPBgsCJYrwlehJaBI8ZChR5AOjgIqnqKUO3bRfZMWthxLn2aq0GWh+AVmaOMv2Vh/ZhWRls5QZBjS6nB5dcXc0O/rQx3uRJLQF7YsDffYq6y4S3nn37/g3x5nxvHjItGfk+L5VY7bf01SB5EObmvbDF9XfdbJf4Uxxk6TOtMu0/UwC5l9EWu80Jsi5zF8UfW9o9ei/Ioe6pzL2Uet7nm8v/LuNV65jy3w6F34kycNa0+sXY20BLvQma1S16OUJczxppDjgHsnDefraiGIUsDh1vAZx621zWT5SRPnAcqFBjuDoQ6Le8Y4CWIV7rsVQro/JGGLVYdiq2SCo1FYgV90hc9huBE+qaOg+GAoTxX/nOCUIob7GocEfThqKfZxB9eBAR6aKyNesZU9pOjcF/gNXFyzwJOyb4Pov4DPHhejPDoNvdhPc2qH0I/9juUdtPnaQACRTWsmGSAJZncDCFXU/GaxyRJxiayog0m1Hjl/GT2VH3Mihn4Xwf0SQ21LXe+k2DRsFySH5Of+3ChwP7IpQPy7fsz6cKEh6Vlw6CDRYsV7Dy6ucSmb7CCC/6+hcVKCQoxIVcPXRGVnII+EJtM9phAzYVpV/pvgFO5wkCeZB9zOBmThoWN7Ql3NWgwUAP4+9bXH4SsDvvYkeoxyKtNBgHEg2oHcTwX0o0DtYU=

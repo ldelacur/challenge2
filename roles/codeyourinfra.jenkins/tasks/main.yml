@@ -1,0 +1,3 @@
+---
+- name: Execute the appropriate tasks, depending on the distribution.
+  include: "{{ ansible_distribution | lower }}.yml"
