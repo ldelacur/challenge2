@@ -6,5 +6,7 @@ Tener un ambiente virtual con python3
   - virtualenv WORKDIR -p python3
 # Activar virtualenv
   - source WORDIR/bin/activate
+# Actualizar
+  - python -m pip install --upgrade pip
 # Desactivar virtualenv
   - deactivate
